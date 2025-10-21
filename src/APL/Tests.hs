@@ -7,7 +7,7 @@ import APL.AST (Exp (..), VName, printExp, subExp)
 import APL.Check (checkExp)
 import APL.Error (isDomainError, isTypeError, isVariableError)
 import APL.Eval (eval, runEval)
-import APL.Parser (parseAPL)
+import APL.Parser (keywords, parseAPL)
 import Test.QuickCheck
   ( Arbitrary (arbitrary, shrink),
     Gen,
@@ -73,11 +73,13 @@ genExp v size =
     halfSize = size `div` 2
     thirdSize = size `div` 3
 
-    genVarName =
-      frequency
-        [ (200, genShortVar), -- 50% chance: length 2–4
-          (5, genLongVar) -- 50% chance: other lengths
-        ]
+    genVarName = do
+      n <-
+        frequency
+          [ (200, genShortVar),
+            (5, genLongVar)
+          ]
+      if n `elem` keywords then genVarName else pure n
       where
         genShortVar = do
           len <- chooseInt (2, 4)

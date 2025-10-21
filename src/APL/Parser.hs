@@ -1,4 +1,4 @@
-module APL.Parser (parseAPL, pExp, pAtom, lString, lInteger, parseTest, pExp2) where
+module APL.Parser (parseAPL, keywords) where
 
 import APL.AST (Exp (..), VName)
 import Control.Monad (void)
