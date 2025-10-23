@@ -14,13 +14,13 @@ instance Functor CheckM where
 
 instance Applicative CheckM where
   (<*>) = ap
-  pure x = CheckM $ \_ -> (x, [])
+  pure x = CheckM $ const (x, [])
 
 instance Monad CheckM where
   CheckM x >>= f = CheckM $ \vars ->
     let (y, errs1) = x vars
         (z, errs2) = runCheckM (f y) vars
-    in (z, union errs1 errs2)
+     in (z, errs1 `union` errs2)
 
 askVars :: CheckM Vars
 askVars = CheckM $ \vars -> (vars, [])
@@ -30,7 +30,7 @@ localVars f m = CheckM $ \vars ->
   runCheckM m (f vars)
 
 failure :: Error -> CheckM ()
-failure err = CheckM $ \_ -> ((), [err])
+failure err = CheckM $ const ((), [err])
 
 maskErrors :: CheckM a -> CheckM a
 maskErrors m = CheckM $ \vars ->
@@ -78,8 +78,7 @@ check (If x y z) = do
 check (Let v e1 e2) = do
   check e1
   localVars (v :) $ check e2
-check (Lambda v e) = do
-  localVars (v :) $ check e
+check (Lambda v e) = localVars (v :) $ check e
 check (Apply x y) = do
   failure NonFunction
   check x

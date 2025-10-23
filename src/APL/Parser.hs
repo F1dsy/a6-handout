@@ -2,7 +2,7 @@ module APL.Parser (parseAPL, keywords) where
 
 import APL.AST (Exp (..), VName)
 import Control.Monad (void)
-import Data.Char (isAlpha, isAlphaNum, isDigit)
+import Data.Char (isAlpha, isAlphaNum)
 import Data.Void (Void)
 import Text.Megaparsec
   ( Parsec,
@@ -12,14 +12,11 @@ import Text.Megaparsec
     errorBundlePretty,
     many,
     notFollowedBy,
-    optional,
     parse,
-    parseTest,
     satisfy,
-    some,
     try,
   )
-import Text.Megaparsec.Char (char, space)
+import Text.Megaparsec.Char (space)
 import Text.Megaparsec.Char.Lexer (decimal, signed)
 
 -- import Text.Megaparsec.Char.Lexer (decimal, signed)
